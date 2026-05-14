@@ -1,0 +1,28 @@
+{
+    "Coding": {
+        "steps": [
+            { "action": "launch_app", "target": "code" },
+            { "action": "open_url",   "target": "https://github.com" },
+            { "action": "delay",      "seconds": 2 }
+        ]
+    },
+    "Writing": {
+        "steps": [
+            { "action": "launch_app", "target": "notepad" },
+            { "action": "play_audio", "target": "cafe" }
+        ]
+    },
+    "Research": {
+        "steps": [
+            { "action": "launch_app", "target": "chrome" },
+            { "action": "open_url",   "target": "https://scholar.google.com" },
+            { "action": "open_url",   "target": "https://notion.so" }
+        ]
+    },
+    "Hobbies": {
+        "steps": [
+            { "action": "launch_app", "target": "spotify" },
+            { "action": "open_url",   "target": "https://youtube.com" }
+        ]
+    }
+}
