@@ -35,38 +35,54 @@ class TimerService:
         duration_seconds = duration_minutes * 60
         timer_id = f"{name}_{int(time.time())}"
         
-        def run_timer():
-            time.sleep(duration_seconds)
-            with self.lock:
-                if timer_id in self.active_timers:
-                    del self.active_timers[timer_id]
-                    self.sessions.append({
-                        "name": name,
-                        "duration": duration_minutes,
-                        "timestamp": datetime.now().isoformat()
-                    })
-                    self._save_state()
-                    if callback:
-                        callback(name)
+        with self.lock:
+            self.active_timers[timer_id] = {
+                "name": name,
+                "duration": duration_minutes,
+                "remaining_seconds": duration_seconds,
+                "total_duration": duration_seconds,
+                "paused": False
+            }
 
-        thread = threading.Thread(target=run_timer, daemon=True)
-        self.active_timers[timer_id] = {
-            "name": name,
-            "duration": duration_minutes,
-            "end_time": time.time() + duration_seconds,
-            "total_duration": duration_seconds,
-            "thread": thread
-        }
-        
+        def run_timer():
+            while True:
+                time.sleep(1)
+                with self.lock:
+                    if timer_id not in self.active_timers:
+                        break
+                    
+                    data = self.active_timers[timer_id]
+                    if data["paused"]:
+                        continue
+                    
+                    data["remaining_seconds"] -= 1
+                    
+                    if data["remaining_seconds"] <= 0:
+                        del self.active_timers[timer_id]
+                        self.sessions.append({
+                            "name": name,
+                            "duration": duration_minutes,
+                            "timestamp": datetime.now().isoformat()
+                        })
+                        self._save_state()
+                        if callback:
+                            callback(name)
+                        break
+
         # Start a monitoring thread for progress updates
         def monitor():
             from src.modes.focus_ui import FocusModeUI
             self.focus_tab_dismissed = False
             bus.publish("ui.add_tab", "Focus", lambda p: FocusModeUI(p, self))
             
-            while timer_id in self.active_timers:
-                rem = self.get_remaining_time(timer_id)
-                percent = (rem / duration_seconds) * 100
+            while True:
+                with self.lock:
+                    if timer_id not in self.active_timers:
+                        break
+                    rem = self.active_timers[timer_id]["remaining_seconds"]
+                    total = self.active_timers[timer_id]["total_duration"]
+                
+                percent = (rem / total) * 100 if total > 0 else 0
                 bus.publish("ui.update_progress", percent)
                 time.sleep(1)
             
@@ -80,21 +96,38 @@ class TimerService:
 
             bus.publish("ui.remove_tab", "Focus")
 
+        threading.Thread(target=run_timer, daemon=True).start()
         threading.Thread(target=monitor, daemon=True).start()
-        thread.start()
         return timer_id
 
+    def pause_timer(self, timer_id):
+        with self.lock:
+            if timer_id in self.active_timers:
+                self.active_timers[timer_id]["paused"] = True
+
+    def resume_timer(self, timer_id):
+        with self.lock:
+            if timer_id in self.active_timers:
+                self.active_timers[timer_id]["paused"] = False
+
+    def add_time(self, timer_id, seconds):
+        with self.lock:
+            if timer_id in self.active_timers:
+                self.active_timers[timer_id]["remaining_seconds"] += seconds
+                self.active_timers[timer_id]["total_duration"] += seconds
+
     def get_remaining_time(self, timer_id):
-        if timer_id in self.active_timers:
-            remaining = self.active_timers[timer_id]["end_time"] - time.time()
-            return max(0, remaining)
+        with self.lock:
+            if timer_id in self.active_timers:
+                return max(0, self.active_timers[timer_id]["remaining_seconds"])
         return 0
 
     def get_all_active(self):
-        return [
-            {"id": tid, "name": data["name"], "remaining": self.get_remaining_time(tid)}
-            for tid, data in self.active_timers.items()
-        ]
+        with self.lock:
+            return [
+                {"id": tid, "name": data["name"], "remaining": data["remaining_seconds"]}
+                for tid, data in self.active_timers.items()
+            ]
 
 # Global instance
 timer_service = TimerService()

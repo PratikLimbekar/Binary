@@ -4,6 +4,51 @@
             "name": "Focus",
             "duration": 25,
             "timestamp": "2026-05-09T22:39:03.965934"
+        },
+        {
+            "name": "Timer",
+            "duration": 1,
+            "timestamp": "2026-05-15T10:24:36.304986"
+        },
+        {
+            "name": "Timer",
+            "duration": 20,
+            "timestamp": "2026-05-15T12:08:45.456957"
+        },
+        {
+            "name": "Timer",
+            "duration": 25,
+            "timestamp": "2026-05-15T14:47:17.884784"
+        },
+        {
+            "name": "Timer",
+            "duration": 5,
+            "timestamp": "2026-05-15T14:52:34.718575"
+        },
+        {
+            "name": "Timer",
+            "duration": 25,
+            "timestamp": "2026-05-15T15:55:33.367017"
+        },
+        {
+            "name": "Timer",
+            "duration": 3,
+            "timestamp": "2026-05-15T16:00:17.965606"
+        },
+        {
+            "name": "Timer",
+            "duration": 5,
+            "timestamp": "2026-05-15T16:00:48.501086"
+        },
+        {
+            "name": "Timer",
+            "duration": 20,
+            "timestamp": "2026-05-15T16:30:59.543547"
+        },
+        {
+            "name": "Timer",
+            "duration": 10,
+            "timestamp": "2026-05-15T16:41:56.558060"
         }
     ]
 }

@@ -1,13 +1,10 @@
 import os
 import re
 import psutil
-from src.core.classifier import classify_intent
-from src.services.gemini_service import getairesponse
 from src.modules.note_manager import save_note
 from src.modules.wiki_module import search_wikipedia
 from src.modules.weather_module import getweather
 from src.modules.news_module import getnews
-from src.utils.image_engine import genimg
 from src.modules import media_controls as mediacontrols
 from src.services.timer_service import timer_service
 from src.services.audio_service import audio_service
@@ -15,16 +12,77 @@ from src.services.finance_service import finance_service
 from src.services.workspace_service import workspace_service
 from src.services.app_launcher_service import app_launcher
 
-def route_command(userinput: str):
-    """
-    Routes user input to actions based on intent classification
-    Returns: 
-    str: the response text or action result."""
+import json
+import re
+from src.services.hybrid_llm_service import hybrid_llm as llm
 
-    intent = classify_intent(userinput)
-    # if intent =='ask_question' or 'introductions': #this is always true lmao
-    if intent in ['ask_question', 'introductions', 'fallback']: #correct
-        return getairesponse(userinput)
+def llm_decide(userinput: str):
+    # Routing doesn't need context, disabling history saves time/RAM
+    response = llm.chat(userinput, include_history=False)
+    response = response.strip()
+
+    # Check if response looks like JSON (starts with { or [)
+    if response.startswith('{') or response.startswith('['):
+        try:
+            data = json.loads(response)
+            if isinstance(data, dict) and "type" in data:
+                result = data
+            else:
+                result = {"type": "chat", "response": response}
+        except:
+            # JSON parsing failed, treat as plain text chat
+            result = {"type": "chat", "response": response}
+    else:
+        # Plain text response - it's a chat answer
+        result = {"type": "chat", "response": response}
+    
+    # Clear history after each response to minimize memory usage
+    llm.clear_history()
+    return result
+
+VALID_TOOLS = {
+    "set_timer",
+    "play_audio",
+    "log_finance",
+    "launch_workspace"
+}
+
+def execute_tool(action: str, params: dict):
+    if action == "set_timer":
+        try:
+            # Be flexible: accept 'minutes', 'duration', or 'time'
+            mins = int(params.get("minutes") or params.get("duration") or params.get("time") or 1)
+        except:
+            mins = 1
+        timer_service.start_timer("Timer", mins)
+        return f"I have started a {mins} minute timer for you."
+
+    if action == "play_audio":
+        return audio_service.play_ambient(str(params.get("track_name", "rain")))
+
+    if action == "log_finance":
+        try:
+            amt = float(params.get("amount", 0))
+        except:
+            amt = 0.0
+        return finance_service.log_transaction(
+            amt,
+            str(params.get("category", "misc")),
+            str(params.get("description", "")),
+            trans_type=str(params.get("trans_type", "Expense"))
+        )
+
+    if action == "launch_workspace":
+        return workspace_service.launch_workspace(
+            params.get("name", "default")
+        )
+
+    return "Unknown tool."
+
+def handle_intent(intent: str, userinput: str):
+    if intent in ['ask_question', 'introductions', 'fallback']:
+        # Static chat is faster and avoids UI flooding
+        return llm.chat(userinput, include_history=True)
     if intent =='open_app':
         # Try the smart launcher first, fall back to hardcoded list
         result = app_launcher.launch_app(userinput)
@@ -43,8 +101,6 @@ def route_command(userinput: str):
         return getweather()
     if intent == 'get_news':
         return getnews()
-    if intent == 'generate_image':
-        return genimg(userinput)
     if intent == 'start_focus_mode':
         return handle_focus_intent(userinput)
     if intent == 'ambient_audio':
@@ -54,7 +110,53 @@ def route_command(userinput: str):
     if intent == 'finance_log':
         return handle_finance_intent(userinput)
     else:
-        return getairesponse(userinput)
+        return llm.chat(userinput, include_history=True)
+
+def route_command(userinput: str):
+    """
+    Routes user input to actions based on intent classification
+    Returns: 
+    str: the response text or action result."""
+
+    # --- FAST-PATH CACHE (Regex) ---
+    cmd = userinput.lower().strip()
+    
+    # Quick app launch
+    if cmd.startswith("open "):
+        return handle_intent("open_app", userinput), "intent"
+        
+    # Quick ambient audio
+    if cmd.startswith("play ") and any(x in cmd for x in ["rain", "storm", "cafe", "forest", "waves"]):
+        sound = cmd.replace("play ", "").strip()
+        return execute_tool("play_audio", {"track_name": sound}), "action"
+
+    # Quick timer
+    timer_match = re.search(r"set timer for (\d+) minutes?", cmd)
+    if timer_match:
+        return execute_tool("set_timer", {"minutes": int(timer_match.group(1))}), "action"
+    
+    # --- LLM BRAIN (Slow-Path) ---
+    intent = llm_decide(userinput)
+
+    t = intent.get("type")
+
+    if t == "chat":
+        return intent.get("response", "The forest is quiet, my thoughts are still gathering..."), "chat"
+
+    if t == "tool_call":
+        action = intent.get("action")
+        params = intent.get("parameters", {})
+        
+        if action not in VALID_TOOLS:
+            return f"The tool '{action}' is not in my repertoire yet.", "chat"
+
+        return execute_tool(action, params), "action"
+    
+    if t == "intent":
+        name = intent.get("name")
+        return handle_intent(name, userinput), f"intent: {name}"
+    
+    return handle_intent("ask_question", userinput), "chat"
     
 
 def getsysinfo()->str:
@@ -176,13 +278,29 @@ def handle_focus_intent(userinput):
             return f"{t['name']} timer: {mins}m {secs}s remaining."
         return "No active timers running."
     
+    # Pause / Resume
+    if "pause" in lower:
+        active = timer_service.get_all_active()
+        if active:
+            timer_service.pause_timer(active[0]['id'])
+            return "Timer paused."
+        return "No active timer to pause."
+
+    if any(w in lower for w in ["resume", "continue"]):
+        active = timer_service.get_all_active()
+        if active:
+            timer_service.resume_timer(active[0]['id'])
+            return "Timer resumed."
+        return "No active timer to resume."
+
     # Stop timer
     if any(w in lower for w in ["stop", "end", "cancel"]):
         active = timer_service.get_all_active()
         if active:
             tid = active[0]['id']
-            if tid in timer_service.active_timers:
-                del timer_service.active_timers[tid]
+            with timer_service.lock:
+                if tid in timer_service.active_timers:
+                    del timer_service.active_timers[tid]
             return "Timer stopped."
         return "No active timers to stop."
     

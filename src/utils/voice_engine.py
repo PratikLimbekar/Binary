@@ -4,6 +4,7 @@ import pyaudio
 import pyttsx3
 import json
 import speech_recognition as sr
+import threading
 from dotenv import load_dotenv
 
 # Try importing vosk, but don't crash if missing
@@ -15,6 +16,7 @@ except ImportError:
 
 _vosk_model = None
 _engine = None
+_engine_lock = threading.Lock()  # Prevent concurrent pyttsx3 access
 
 def _get_vosk_model():
     global _vosk_model
@@ -97,7 +99,7 @@ def listentouser():
             return text
         except sr.WaitTimeoutError:
             print("Listening timeout.")
-            return "Listening timed out."
+            return None
         except sr.UnknownValueError:
             print("Could not understand audio.")
             return None
@@ -106,11 +108,20 @@ def listentouser():
             return None
 
 def speakresponse(text):
-    """Speaks the response using TTS engine."""
-    engine = _get_engine()
-    if engine:
-        engine.say(text)
-        engine.runAndWait()
+    """Speaks the response using TTS engine (thread-safe)."""
+    global _engine
+    with _engine_lock:
+        try:
+            # Only initialize engine if it doesn't exist
+            if _engine is None:
+                _engine = pyttsx3.init()
+                _engine.setProperty('rate', 200)
+                _engine.setProperty('volume', 0.9)
+            
+            _engine.say(text)
+            _engine.runAndWait()
+        except Exception as e:
+            print(f"Error in speakresponse: {e}")
 
 def warmupmic():
     """Warms up the microphone."""

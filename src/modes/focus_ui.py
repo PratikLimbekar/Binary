@@ -26,9 +26,9 @@ class FocusModeUI:
         self._pause_remaining = None
         self._timer_id    = None   # resolved on first tick
 
+        self._completed = False  # True once the timer finishes
         self._build_ui()
         self._start_tick()
-        self._completed = False  # True once the timer finishes
         # Subscribe to timer-complete notification
         from src.core.event_bus import bus as _bus
         _bus.subscribe("ui.timer_complete", self._handle_timer_complete_event)
@@ -127,7 +127,10 @@ class FocusModeUI:
         self._timer_id   = entry["id"]
         remaining   = entry["remaining"]
         name        = entry["name"]
-        total_secs  = self.timer_service.active_timers[self._timer_id]["total_duration"]
+        
+        # Get total duration from the service
+        with self.timer_service.lock:
+            total_secs = self.timer_service.active_timers[self._timer_id]["total_duration"]
 
         mins = int(remaining // 60)
         secs = int(remaining % 60)
@@ -154,21 +157,15 @@ class FocusModeUI:
 
     def _toggle_pause(self):
         if not self._paused:
-            # Pause: record remaining, freeze end_time
             active = self.timer_service.get_all_active()
             if active:
-                self._timer_id        = active[0]["id"]
-                self._pause_remaining = active[0]["remaining"]
-                # Extend end_time infinitely so the run_timer thread waits
-                self.timer_service.active_timers[self._timer_id]["end_time"] = float("inf")
+                self._timer_id = active[0]["id"]
+                self.timer_service.pause_timer(self._timer_id)
             self._paused = True
             self.pause_btn.config(text="▶ Resume")
         else:
-            # Resume: restore end_time from remaining
-            if self._timer_id and self._timer_id in self.timer_service.active_timers:
-                self.timer_service.active_timers[self._timer_id]["end_time"] = (
-                    time.time() + (self._pause_remaining or 0)
-                )
+            if self._timer_id:
+                self.timer_service.resume_timer(self._timer_id)
             self._paused = False
             self.pause_btn.config(text="⏸ Pause")
 
@@ -176,8 +173,7 @@ class FocusModeUI:
         active = self.timer_service.get_all_active()
         if active:
             tid = active[0]["id"]
-            self.timer_service.active_timers[tid]["end_time"] += 300  # +5 min
-            self.timer_service.active_timers[tid]["total_duration"] += 300
+            self.timer_service.add_time(tid, 300)
 
     def _end_session(self):
         """Stop the timer and close the tab."""
