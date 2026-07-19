@@ -1,0 +1,289 @@
+{
+    "sessions": [
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-09T22:39:03.965934"
+        },
+        {
+            "name": "Timer",
+            "duration": 1,
+            "timestamp": "2026-05-15T10:24:36.304986"
+        },
+        {
+            "name": "Timer",
+            "duration": 20,
+            "timestamp": "2026-05-15T12:08:45.456957"
+        },
+        {
+            "name": "Timer",
+            "duration": 25,
+            "timestamp": "2026-05-15T14:47:17.884784"
+        },
+        {
+            "name": "Timer",
+            "duration": 5,
+            "timestamp": "2026-05-15T14:52:34.718575"
+        },
+        {
+            "name": "Timer",
+            "duration": 25,
+            "timestamp": "2026-05-15T15:55:33.367017"
+        },
+        {
+            "name": "Timer",
+            "duration": 3,
+            "timestamp": "2026-05-15T16:00:17.965606"
+        },
+        {
+            "name": "Timer",
+            "duration": 5,
+            "timestamp": "2026-05-15T16:00:48.501086"
+        },
+        {
+            "name": "Timer",
+            "duration": 20,
+            "timestamp": "2026-05-15T16:30:59.543547"
+        },
+        {
+            "name": "Timer",
+            "duration": 10,
+            "timestamp": "2026-05-15T16:41:56.558060"
+        },
+        {
+            "name": "Timer",
+            "duration": 25,
+            "timestamp": "2026-05-16T12:17:30.375540"
+        },
+        {
+            "name": "Timer",
+            "duration": 5,
+            "timestamp": "2026-05-16T12:25:29.070354"
+        },
+        {
+            "name": "Timer",
+            "duration": 25,
+            "timestamp": "2026-05-16T12:54:27.522431"
+        },
+        {
+            "name": "Timer",
+            "duration": 5,
+            "timestamp": "2026-05-16T12:59:37.427524"
+        },
+        {
+            "name": "Timer",
+            "duration": 45,
+            "timestamp": "2026-05-17T12:24:32.331214"
+        },
+        {
+            "name": "Timer",
+            "duration": 5,
+            "timestamp": "2026-05-17T12:29:53.079634"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-17T14:57:55.777283"
+        },
+        {
+            "name": "Timer",
+            "duration": 30,
+            "timestamp": "2026-05-17T15:02:54.629250"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-17T16:08:47.582525"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-17T16:36:49.046849"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-17T16:41:52.157616"
+        },
+        {
+            "name": "Timer",
+            "duration": 45,
+            "timestamp": "2026-05-17T16:56:54.774436"
+        },
+        {
+            "name": "Timer",
+            "duration": 45,
+            "timestamp": "2026-05-17T20:22:18.575160"
+        },
+        {
+            "name": "Timer",
+            "duration": 10,
+            "timestamp": "2026-05-17T20:32:37.494863"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-18T12:13:04.722890"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-18T12:18:59.478264"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-18T13:04:47.959403"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-18T13:09:51.179070"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-18T13:38:21.825974"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-18T13:43:26.344722"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-18T14:10:56.577195"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-18T14:16:18.042529"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-18T17:36:28.362836"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-18T17:41:30.864837"
+        },
+        {
+            "name": "Timer",
+            "duration": 25,
+            "timestamp": "2026-05-22T13:03:24.425902"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-22T13:28:29.627119"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-22T13:35:19.228518"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-22T14:10:12.955695"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-22T14:15:16.493449"
+        },
+        {
+            "name": "Timer",
+            "duration": 25,
+            "timestamp": "2026-05-22T15:14:44.711497"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-23T17:59:20.381909"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-23T17:59:22.813223"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-23T18:04:28.727860"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-23T18:52:07.700068"
+        },
+        {
+            "name": "Break",
+            "duration": 5,
+            "timestamp": "2026-05-23T18:57:33.207289"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T14:58:55.077604"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T14:58:56.821273"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T14:58:59.116688"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T15:26:59.060406"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T15:27:01.155943"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T15:52:04.182057"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T15:52:07.211064"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T16:48:41.157545"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-24T16:48:45.159341"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-25T11:55:13.494035"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-25T12:58:20.541523"
+        },
+        {
+            "name": "Focus",
+            "duration": 25,
+            "timestamp": "2026-05-25T12:58:23.435424"
+        }
+    ]
+}

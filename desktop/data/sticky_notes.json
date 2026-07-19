@@ -1,0 +1,33 @@
+{
+    "settings": {
+        "tab_visible": true,
+        "workspace_width": 250,
+        "active_note_id": "note_1783056050493"
+    },
+    "notes": {
+        "default_note": {
+            "id": "default_note",
+            "title": "Current Projects",
+            "content": "- Binary: The Virtual AI Desktop Assistant -> fix this thing not minimizing if clicked outside and in sticky note tab.\n- Motion Controlled Cricket Game: Research Stage, implemented Quick Play 50 Overs and IPL Tournament. Working on the Research Paper Now.\n\n- Convert redmi note 8 pro into a binary dock?\nOther Stuff:\n- DSA!!! => Start NOW!\n- Open Source Contributions (ask jagdish after exams)\n- Research Paper?\n- Finance Tracking\n\nPhone SSH command: ssh -p 8022 u0_a249@192.168.1.3\n\nWindows Portfolio Website(?)\n\nWork on the Career mode section now. Start with asking name, position (put this in config.js), and autoplaying non striker and scores. put some random serieses there as well. Show who to send next in match after wicket falls, and whose position do they take at the start of the tournament.",
+            "last_accessed": 1782827049.3074138
+        },
+        "note_1782827049640": {
+            "id": "note_1782827049640",
+            "title": "DSA",
+            "content": "- Rotate Image: remember second loop transpose madhye start with j = i and not 0.\n- Search a 2D matrix II\n- Two furthest houses with different colors => two for loops give 100% complexity\n- Valid Palindrome (use alnum, tolower())\n- Valid Anagram (sort both strings and compare)\n- Product of Array Except Self (suff ke loop mei i >= 0 karo)\n- Best time to buy and sell stock\n- Squares of a Sorted Array (use two pointers or just sort!)\n- Majority Element (voting algorithm)\n- Shuffle the Array (For loop, two pointers kinda)\n- Max Consecutive Ones (easy af)\n- Set Mismatch (use a vector and not a hashmap)\n- How many numbers are smaller than the current number (two for loops)\n- ",
+            "last_accessed": 1783056050.492252
+        },
+        "note_1783056050493": {
+            "id": "note_1783056050493",
+            "title": "Binary on Smartphone",
+            "content": "Event-driven Vision Detection: MotionDetected? -> ObjectDetected? -> PersonDetected? -> FaceRecog? -> ActionRecog? -> Reasoning -> Response.\nTo react:\nSomeone enters room,\nUser leaves desk and returns (time)\nUser sleeping\nBad Posture\nDrinking water\nPhone distraction\nRoom darkness\n\nuse LAN for sync",
+            "last_accessed": 1784264894.1291368
+        },
+        "note_1783351748351": {
+            "id": "note_1783351748351",
+            "title": "Tomorrow",
+            "content": "",
+            "last_accessed": 1783443856.8350594
+        }
+    }
+}
