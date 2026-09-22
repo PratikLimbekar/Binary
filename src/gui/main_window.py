@@ -439,7 +439,11 @@ bus.subscribe("ui.execute",         lambda func:       _safe_after(func))
 
 # ── Start ─────────────────────────────────────────────────────────────────────
 
-threading.Thread(target=voicethread, daemon=True).start()
-blinktimer()
-collapse_gui() # Ensure we start minimized
-root.mainloop()
+def start_app():
+    threading.Thread(target=voicethread, daemon=True).start()
+    blinktimer()
+    collapse_gui() # Ensure we start minimized
+
+if __name__ == "__main__":
+    start_app()
+    root.mainloop()

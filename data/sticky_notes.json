@@ -21,7 +21,13 @@
             "id": "note_1783056050493",
             "title": "Binary on Smartphone",
             "content": "Event-driven Vision Detection: MotionDetected? -> ObjectDetected? -> PersonDetected? -> FaceRecog? -> ActionRecog? -> Reasoning -> Response.\nTo react:\nSomeone enters room,\nUser leaves desk and returns (time)\nUser sleeping\nBad Posture\nDrinking water\nPhone distraction\nRoom darkness\n\nuse LAN for sync",
-            "last_accessed": 1783075029.3925953
+            "last_accessed": 1784264894.1291368
+        },
+        "note_1783351748351": {
+            "id": "note_1783351748351",
+            "title": "Tomorrow",
+            "content": "",
+            "last_accessed": 1783443856.8350594
         }
     }
 }

@@ -3,8 +3,8 @@ import struct
 import pyaudio
 import pyttsx3
 import json
-import speech_recognition as sr
 import threading
+import speech_recognition as sr
 from dotenv import load_dotenv
 
 # Try importing vosk, but don't crash if missing
@@ -24,8 +24,8 @@ def _get_vosk_model():
         return None
         
     if _vosk_model is None:
-        # Look for model in assets/models/vosk-model-small-en-us-0.15
-        model_path = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'models', 'vosk-model-small-en-us-0.15')
+        # Look for model in assets/models/vosk-model-small-en-in-0.4
+        model_path = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'models', 'vosk-model-small-en-in-0.4')
         
         if os.path.exists(model_path):
             try:

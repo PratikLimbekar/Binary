@@ -14,45 +14,64 @@ def setvolume(val):
     pygame.mixer.music.set_volume(volume)
 
 
-def playmusic(play):
+def playmusic(play=None):
     global is_playing
-    pygame.mixer.music.load(playlist[index])
-    pygame.mixer.music.play()
-    play.config(text="Pause")
-    is_playing = True
+    if not playlist:
+        return
+    try:
+        pygame.mixer.music.load(playlist[index])
+        pygame.mixer.music.play()
+        if play:
+            play.config(text="Pause")
+        is_playing = True
+    except Exception as e:
+        print(f"Error playing music: {e}")
+        is_playing = False
 
-def pausemusic(play):
+def pausemusic(play=None):
     global is_playing
     if is_playing:
         pygame.mixer.music.pause()
-        play.config(text="▶️")
+        if play:
+            play.config(text="▶️")
         is_playing = False
     else:
-        pygame.mixer.music.load(playlist[index])
-        pygame.mixer.music.play()
-        play.config(text="⏸")
-        is_playing = True
-    
-def nextmusic(play):
+        if not playlist:
+            return
+        try:
+            pygame.mixer.music.load(playlist[index])
+            pygame.mixer.music.play()
+            if play:
+                play.config(text="⏸")
+            is_playing = True
+        except Exception as e:
+            print(f"Error resuming music: {e}")
+
+def nextmusic(play=None):
     global index
+    if not playlist:
+        return
     index = (index + 1) % len(playlist)
     playmusic(play)
 
-def prevmusic(play):
+def prevmusic(play=None):
     global index
+    if not playlist:
+        return
     index = (index - 1) % len(playlist)
     playmusic(play)
 
-
-def playrandom():
+def playrandom(play=None):
     global index
+    if not playlist:
+        return
     previndex = index
     if len(playlist) > 1:
         while True:
             index = random.randint(0, len(playlist) - 1)
             if index != previndex:
                 break
-    playmusic()
+    playmusic(play)
 
 def check_music_end(root):
     if not pygame.mixer.music.get_busy() and is_playing:
@@ -62,9 +81,7 @@ def check_music_end(root):
             playrandom()
         else:
             nextmusic()
-    root.after(1000, check_music_end, root)#Tkinter method
-    #scheules a function to be called after a certain amount of time
-    #here, delay is 1000 ms.
+    root.after(1000, check_music_end, root)
 
 
 def toggleloop(loop):

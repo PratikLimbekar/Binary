@@ -8,18 +8,20 @@ from typing import List, Dict, Optional
 from dotenv import load_dotenv
 from src.services.local_llm_service import LocalLLMService
 
-load_dotenv()
+_BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+load_dotenv(os.path.join(_BASE_DIR, '.env'))
 
 class HybridLLMService:
     """
     A robust LLM service with a 3-tier fallback system:
-    1. Groq (Cloud - Llama 3.1 70B)
+    1. Groq (Cloud)
     2. Pollinations.ai (Cloud - Llama 3 / OpenAI compatible)
     3. Local Ollama (Local - smollm2)
     """
 
     def __init__(self, system_prompt: Optional[str] = None):
         self.groq_key = os.getenv("GROQ_API_KEY")
+        self.groq_model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
         self.groq_url = "https://api.groq.com/openai/v1/chat/completions"
         self.pollinations_url = "https://text.pollinations.ai/openai/v1/chat/completions"
         
@@ -72,9 +74,11 @@ class HybridLLMService:
         print("[AI BRAIN] State: Processing...")
         
         # 1. Try Groq (Tier 1)
-        if self.groq_key:
+        groq_key = os.getenv("GROQ_API_KEY") or self.groq_key
+        if groq_key:
+            self.groq_key = groq_key
             try:
-                print("[AI BRAIN] Tier 1: Trying Groq (Llama 3.1 70B)...")
+                print(f"[AI BRAIN] Tier 1: Trying Groq...")
                 response = self._chat_groq(user_message, include_history)
                 if response:
                     print(f"[AI BRAIN] SUCCESS: Groq provided response.")
@@ -110,24 +114,43 @@ class HybridLLMService:
             "Authorization": f"Bearer {self.groq_key}",
             "Content-Type": "application/json"
         }
-        payload = {
-            "model": "llama-3.3-70b-versatile",
-            "messages": self._get_messages(user_message, include_history),
-            "temperature": 0.2,
-            "max_tokens": 512
-        }
-        print("[AI BRAIN] Sending request to Groq API...")
-        response = requests.post(self.groq_url, headers=headers, json=payload, timeout=8)
-        print(f"[AI BRAIN] Received response (Status: {response.status_code})")
-        if response.status_code != 200:
-            print(f"[AI BRAIN] Groq Error Details: {response.text}")
-        response.raise_for_status()
-        data = response.json()
-        content = data["choices"][0]["message"]["content"].strip()
-        
-        if include_history:
-            self._update_history(user_message, content)
-        return content
+        models_to_try = [
+            os.getenv("GROQ_MODEL", self.groq_model),
+            "openai/gpt-oss-120b",
+            "qwen/qwen3.8-27b",
+            "openai/gpt-oss-20b"
+        ]
+        # Deduplicate while maintaining order
+        models_to_try = list(dict.fromkeys([m for m in models_to_try if m]))
+
+        last_error = None
+        for model in models_to_try:
+            payload = {
+                "model": model,
+                "messages": self._get_messages(user_message, include_history),
+                "temperature": 0.2,
+                "max_tokens": 512
+            }
+            print(f"[AI BRAIN] Sending request to Groq API ({model})...")
+            response = requests.post(self.groq_url, headers=headers, json=payload, timeout=8)
+            print(f"[AI BRAIN] Received response (Status: {response.status_code})")
+            if response.status_code == 200:
+                data = response.json()
+                content = data["choices"][0]["message"]["content"].strip()
+                if include_history:
+                    self._update_history(user_message, content)
+                return content
+            elif response.status_code == 404:
+                print(f"[AI BRAIN] Groq model '{model}' not found or inaccessible, trying alternative...")
+                last_error = response.text
+                continue
+            else:
+                print(f"[AI BRAIN] Groq Error Details: {response.text}")
+                response.raise_for_status()
+
+        if last_error:
+            raise RuntimeError(f"All configured Groq models failed: {last_error}")
+        return None
 
     def _chat_pollinations(self, user_message: str, include_history: bool) -> Optional[str]:
         payload = {

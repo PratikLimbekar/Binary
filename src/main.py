@@ -40,9 +40,10 @@ def main():
     optimize_process()
     
     # Import GUI here to ensure environment is set up first
-    from src.gui.main_window import root
+    from src.gui.main_window import root, start_app
     
     print("Launching Interface...")
+    start_app()
     root.mainloop()
 
 if __name__ == "__main__":
